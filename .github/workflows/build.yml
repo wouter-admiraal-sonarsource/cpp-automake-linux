@@ -18,11 +18,11 @@ jobs:
       - name: Download and install the build wrapper
         run: |
           mkdir $HOME/.sonar
-          curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ secrets.SONAR_HOST_URL }}/static/cpp/build-wrapper-linux-x86.zip
+          curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip https://zipeng.eu.ngrok.io/static/cpp/build-wrapper-linux-x86.zip
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           export PATH="$HOME/.sonar/build-wrapper-linux-x86:$PATH"
         env:
-          SONAR_HOST_URL: "https://zipeng.eu.ngrok.io/" # There's an issue on sonarcloud.io
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Build the project
         run: |
