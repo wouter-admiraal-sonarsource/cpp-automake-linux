@@ -22,7 +22,7 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           export PATH="$HOME/.sonar/build-wrapper-linux-x86:$PATH"
         env:
-          SONAR_HOST_URL: https://zipeng.eu.ngrok.io # There's an issue on sonarcloud.io
+          SONAR_HOST_URL: "https://zipeng.eu.ngrok.io/" # There's an issue on sonarcloud.io
 
       - name: Build the project
         run: |
