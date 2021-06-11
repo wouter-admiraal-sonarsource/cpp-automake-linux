@@ -19,9 +19,6 @@ jobs:
         run: |
           mkdir $HOME/.sonar
           curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ secrets.SONAR_HOST_URL }}/static/cpp/build-wrapper-linux-x86.zip
-          echo "Download complete. List:"
-          ls -la $HOME/.sonar/
-          echo "Try to unzip:"
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           export PATH="$HOME/.sonar/build-wrapper-linux-x86:$PATH"
         env:
