@@ -17,6 +17,8 @@ jobs:
 
       - name: Download and install the build wrapper
         run: |
+          autoreconf -V
+          echo "...."
           autoreconf --install
           curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ secrets.SONAR_HOST_URL }}/static/cpp/build-wrapper-linux-x86.zip
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
