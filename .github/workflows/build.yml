@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,11 +18,11 @@ jobs:
       - name: Download and install the build wrapper, build the project
         run: |
           mkdir $HOME/.sonar
-          curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip https://zipeng.eu.ngrok.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
+          curl -sSLo $HOME/.sonar/build-wrapper-macosx-x86.zip https://zipeng.eu.ngrok.io/static/cpp/build-wrapper-macosx-x86.zip
+          unzip -o $HOME/.sonar/build-wrapper-macosx-x86.zip -d $HOME/.sonar/
           autoreconf --install
           ./configure
-          $HOME/.sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+          $HOME/.sonar/build-wrapper-macosx-x86/build-wrapper-macosx-x86-64 --out-dir bw-output make clean all
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
