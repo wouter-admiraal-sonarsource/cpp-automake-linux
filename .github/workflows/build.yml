@@ -10,10 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      #- name: Checkout code
-      #  uses: actions/checkout@v2
-      #  with:
-      #    fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Download and install the build wrapper
         run: |
@@ -22,7 +22,7 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           export PATH="$HOME/.sonar/build-wrapper-linux-x86:$PATH"
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: https://zipeng.eu.ngrok.io # There's an issue on sonarcloud.io
 
       - name: Build the project
         run: |
@@ -30,11 +30,11 @@ jobs:
           ./configure
           build-wrapper-linux-x86-64 --out-dir bw-output make clean all
 
-      #- name: SonarQube analysis
-      #  uses: SonarSource/sonarqube-scan-action@v1.0.0
-      #  with:
-      #    args: -Dsonar.cfamily.build-wrapper-output=bw-output
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed because targetting SonarCloud here
-      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: SonarQube analysis
+        uses: SonarSource/sonarqube-scan-action@v1.0.0
+        with:
+          args: -Dsonar.cfamily.build-wrapper-output=bw-output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed because targetting SonarCloud here
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
