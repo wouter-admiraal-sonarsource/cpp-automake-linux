@@ -43,7 +43,7 @@ jobs:
           ./configure
           # Analyze project (part of tutorial)
           build-wrapper-linux-x86-64 --out-dir bw-output make clean all
-          sonar-scanner \
+          sonar-scanner -X \
             -Dsonar.projectKey=cpp-cmake-macos \
             -Dsonar.sources=. \
             -Dsonar.cfamily.build-wrapper-output=bw-output \
