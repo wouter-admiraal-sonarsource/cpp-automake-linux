@@ -15,21 +15,38 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download and install the build wrapper, build the project
+      - name: Download and install the build wrapper
         run: |
-          mkdir $HOME/.sonar
-          curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ secrets.SONAR_HOST_URL }}/static/cpp/build-wrapper-linux-x86.zip
+          curl --create-dirs -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip https://wad.eu.ngrok.io/static/cpp/build-wrapper-linux-x86.zip
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
+          export PATH=$HOME/.sonar/build-wrapper-linux-x86:$PATH
+
+
+      - name: Download and install the SonarScanner
+        run: |
+          export SONAR_SCANNER_VERSION=4.7.0.2747
+          export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+          curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+          unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+          export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+          export SONAR_SCANNER_OPTS="-server"
+
+      - name: Build and analyse the project
+        run: |
+          # PATH exports are not preserved between steps on GH Actions.
+          export SONAR_SCANNER_VERSION=4.7.0.2747
+          export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+          export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+          export PATH=$HOME/.sonar/build-wrapper-linux-x86:$PATH
+          # Configure build (not part of tutorial)
           autoreconf --install
           ./configure
-          $HOME/.sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+          # Analyze project (part of tutorial)
+          build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+          sonar-scanner \
+            -Dsonar.projectKey=cpp-cmake-macos \
+            -Dsonar.sources=. \
+            -Dsonar.cfamily.build-wrapper-output=bw-output \
+            -Dsonar.host.url=https://wad.eu.ngrok.io
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      - name: SonarQube analysis
-        uses: SonarSource/sonarqube-scan-action@v1.0.0
-        with:
-          args: -Dsonar.cfamily.build-wrapper-output=bw-output
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
